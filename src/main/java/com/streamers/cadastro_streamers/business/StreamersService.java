@@ -19,9 +19,28 @@ public class StreamersService {
         repository.saveAndFlush(streamers);
     }
 
-    public Streamers buscarStreamersPorConteudo(String conteudo){
-        return repository.findByConteudo(conteudo).orElseThrow(
-                () -> new RuntimeException("Conteudo não encontrado")
-        )
+    public Streamers buscarStreamersPorNome(String nome){
+        return repository.findByNome(nome).orElseThrow(
+                () -> new RuntimeException("Nome não encontrado")
+        );
+    }
+
+    public void deletarStreamersPorNome(String nome)
+    {
+        repository.deleteByNome(nome);
+    }
+
+    public void atualizarStreamersPorId(Integer id, Streamers streamers)
+    {
+        Streamers streamersEntity = repository.findById(id).orElseThrow(() -> new RuntimeException("Streamer não encontrado"));
+        Streamers streamersAtualizado = Streamers.builder()
+                .nome(streamers.getNome() != null ? streamers.getNome() : streamersEntity.getNome())
+                .conteudo(streamers.getConteudo() != null ? streamers.getConteudo() : streamersEntity.getConteudo())
+                .plataforma(streamers.getPlataforma() != null ? streamers.getPlataforma() : streamersEntity.getPlataforma())
+                .seguidores(streamers.getSeguidores() != null ? streamers.getSeguidores() : streamersEntity.getSeguidores())
+                .id(streamersEntity.getId())
+                .build();
+
+        repository.saveAndFlush(streamersAtualizado);
     }
 }
